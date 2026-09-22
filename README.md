@@ -28,3 +28,147 @@ You may take liberties to modify your application’s features and purpose from 
 Make your application look professional and presentable. Use valid HTML and CSS to structure and style your application.
 
 No third-party JavaScript or CSS libraries or frameworks may be used without prior instructor permission.
+
+# Practice
+## HTML
+
+    <main>
+        <form class="message-form">
+            <label for="message-input">Add a message</label>
+            <textarea id="message-input" name="message" rows="4" required></textarea>
+            <button type="submit">Post message</button>
+            <p class="form-status" aria-live="polite"></p>
+        </form>
+        <section class="messages">
+
+        </section>
+    </main>
+
+## JavaScript
+
+    const messageSection = document.querySelector(".messages");
+    const messageForm = document.querySelector(".message-form");
+    const messageInput = document.querySelector("#message-input");
+    const formStatus = document.querySelector(".form-status");
+
+    async function getMessages() {
+        messageSection.textContent = "Loading messages...";
+
+        try {
+            const response = await fetch("/messages");
+
+            if (!response.ok) {
+                throw new Error(`The server returned ${response.status}.`);
+            }
+
+            const messages = await response.json();
+            messageSection.replaceChildren();
+
+            if (messages.length === 0) {
+                messageSection.textContent = "No messages have been posted yet.";
+                return;
+            }
+
+            messages.forEach((messageData) => {
+                const message = document.createElement("p");
+                message.textContent = messageData.message;
+                messageSection.append(message);
+            });
+        } catch (error) {
+            messageSection.textContent = "Unable to load messages.";
+            console.error(error);
+        }
+    }
+
+    async function addMessage(event) {
+        event.preventDefault();
+
+        const message = messageInput.value.trim();
+
+        if (!message) {
+            formStatus.textContent = "Please enter a message.";
+            return;
+        }
+
+        const submitButton = messageForm.querySelector("button");
+        submitButton.disabled = true;
+        formStatus.textContent = "Posting message...";
+
+        try {
+            const response = await fetch("/messages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message })
+            });
+
+            if (!response.ok) {
+                throw new Error(`The server returned ${response.status}.`);
+            }
+
+            messageForm.reset();
+            formStatus.textContent = "Message posted.";
+            await getMessages();
+        } catch (error) {
+            formStatus.textContent = "Unable to post message.";
+            console.error(error);
+        } finally {
+            submitButton.disabled = false;
+        }
+    }
+
+    messageForm.addEventListener("submit", addMessage);
+    getMessages();
+
+## Python
+
+    @app.route("/messages", methods=["GET"])
+    def get_messages():
+        messages = []
+
+        with MESSAGE_FILE.open("r", encoding="utf-8") as file:
+            for line in file:
+                if line.strip():
+                    messages.append(json.loads(line))
+
+        return jsonify(messages), 200
+
+    @app.route("/messages", methods=["POST"])
+    def add_message():
+        if not request.is_json:
+            return jsonify({
+                "error": "Content-Type must be application/json"
+            }), 400
+
+        data = request.get_json(silent=True)
+
+        if not isinstance(data, dict):
+            return jsonify({
+                "error": "Request body must contain a JSON object"
+            }), 400
+
+        message = data.get("message")
+
+        if not isinstance(message, str) or not message.strip():
+            return jsonify({
+                "error": "The message field must contain text"
+            }), 400
+
+        new_message = {
+            "message": message.strip()
+        }
+
+        with MESSAGE_FILE.open("a+", encoding="utf-8") as file:
+            file.seek(0, 2)
+
+            if file.tell() > 0:
+                file.seek(file.tell() - 1)
+                last_character = file.read(1)
+
+                if last_character != "\n":
+                    file.write("\n")
+
+            file.write(json.dumps(new_message) + "\n")
+
+        return "", 201
