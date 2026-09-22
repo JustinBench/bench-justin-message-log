@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def main():
-    return "<p>Main page</p>"
+    return render_template("main/index.html")
 
 @app.route("/about_me")
 def project_one():
