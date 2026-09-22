@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -6,11 +6,10 @@ app = Flask(__name__)
 def main():
     return "<p>Main page</p>"
 
+@app.route("/about_me")
+def project_one():
+    return render_template("project_one/about_me.html")
 
 @app.route("/zelda")
-def zelda_quiz():
-    url = "../Random Generation/index.html"
-    file = open(url, "r")
-    zelda_html = file.read()
-    file.close()
-    return zelda_html
+def project_two():
+    return render_template("project_two/zelda.html")
