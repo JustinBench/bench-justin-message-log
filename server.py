@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
 from flask import Flask, render_template, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, origins=[])
 
 MESSAGE_FILE = Path(__file__).parent / "messages.jsonl"
 
@@ -67,3 +69,6 @@ def project_one():
 @app.route("/zelda")
 def project_two():
     return render_template("project_two/zelda.html")
+
+if __name__ == "__main__":
+    app.run()
