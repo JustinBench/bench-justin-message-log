@@ -190,10 +190,16 @@ DON'T PUT API KEYS IN THE FRONTEND OR ON GITHUB!!! Store it on the machine that 
 
 API stands for Application Programming Interface. It is a set of rules and protocols that allows different software applications to communicate and share data with each other.
 
+- POST requests create a new thing (not idempotent) POST /thing
+- GET collects data (idempotent)
+- PUT creates a new thing in a specific spot, so it's like replacing something in a list (idempotent) PUT /thing/#
+- PATCH update something, so only change part of what's already there (idempotent) /PATCH/thing/#
+
+
 ## In this project
 
 - Front end: all the html, css, javascript files, and media (anything in static or templates)
 - Back end: server.py
 - Database: messages.jsonl
 
-The API is pretty much the GET and POST methods defined in server.py
+The API is pretty much the GET and POST methods defined in server.py. GET is used by calling "await fetch('/messages')"

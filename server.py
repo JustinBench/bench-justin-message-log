@@ -12,7 +12,7 @@ MESSAGE_FILE = Path(__file__).parent / "messages.jsonl"
 def main():
     return render_template("main/index.html")
 
-@app.route("/quiz/add_question")
+@app.route("/quiz/add_questions")
 def add_question():
     return render_template("main/add_question.html")
 
@@ -31,7 +31,7 @@ def get_questions():
 
     return jsonify(questions), 200
 
-@app.route("/questions", methods=["POST"])
+@app.route("/messages", methods=["POST"])
 def post_new_question():
     if not request.is_json:
         return jsonify({
@@ -94,7 +94,7 @@ def post_new_question():
 def project_one():
     return render_template("project_one/about_me.html")
 
-@app.route("/zelda")
+@app.route("/original")
 def project_two():
     return render_template("project_two/zelda.html")
 
