@@ -172,3 +172,28 @@ No third-party JavaScript or CSS libraries or frameworks may be used without pri
             file.write(json.dumps(new_message) + "\n")
 
         return "", 201
+
+# Zelda Question Info
+
+Each question obtained from Open Trivia DB is an object with the following data members:
+
+- question (str): the actual text of the question
+- correct_answer (str): the correct answer to the question
+- incorrect_answers: (Array[str]): a list of incorrect answers to the question
+
+# Other Notes
+
+Three tiered databases: Front end, back end, and databases.
+Create interfaces that connect these three things in a way so changing any one of them won't break how the others work (or something like that).
+
+DON'T PUT API KEYS IN THE FRONTEND OR ON GITHUB!!! Store it on the machine that runs your backend.
+
+API stands for Application Programming Interface. It is a set of rules and protocols that allows different software applications to communicate and share data with each other.
+
+## In this project
+
+- Front end: all the html, css, javascript files, and media (anything in static or templates)
+- Back end: server.py
+- Database: messages.jsonl
+
+The API is pretty much the GET and POST methods defined in server.py

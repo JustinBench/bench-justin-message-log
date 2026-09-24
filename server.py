@@ -4,7 +4,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=[])
+CORS(app, origins=["https://opentdb.com"])
 
 MESSAGE_FILE = Path(__file__).parent / "messages.jsonl"
 
@@ -12,19 +12,27 @@ MESSAGE_FILE = Path(__file__).parent / "messages.jsonl"
 def main():
     return render_template("main/index.html")
 
+@app.route("/quiz/add_question")
+def add_question():
+    return render_template("main/add_question.html")
+
+@app.route("/quiz/take_quiz")
+def take_quiz():
+    return render_template("main/quiz.html")
+
 @app.route("/messages", methods=["GET"])
-def get_messages():
-    messages = []
+def get_questions():
+    questions = []
 
     with MESSAGE_FILE.open("r", encoding="utf-8") as file:
         for line in file:
             if line.strip():
-                messages.append(json.loads(line))
+                questions.append(json.loads(line))
 
-    return jsonify(messages), 200
+    return jsonify(questions), 200
 
-@app.route("/messages", methods=["POST"])
-def add_message():
+@app.route("/questions", methods=["POST"])
+def post_new_question():
     if not request.is_json:
         return jsonify({
             "error": "Content-Type must be application/json"
@@ -37,15 +45,35 @@ def add_message():
             "error": "Request body must contain a JSON object"
         }), 400
 
-    message = data.get("message")
+    question = data.get("question")
+    correct_answer = data.get("correct_answer")
+    incorrect_answers = data.get("incorrect_answers")
 
-    if not isinstance(message, str) or not message.strip():
+    if not isinstance(question, str) or not question.strip():
         return jsonify({
-            "error": "The message field must contain text"
+            "error": "The question field must contain text"
         }), 400
 
-    new_message = {
-        "message": message.strip()
+    if not isinstance(correct_answer, str) or not correct_answer.strip():
+        return jsonify({
+                    "error": "There must be a correct answer that contains text"
+                }), 400
+
+    if len(incorrect_answers) == 0:
+        return jsonify({
+                    "error": "There must be at least one incorrect answer"
+                })
+    else:
+        for answer in incorrect_answers:
+            if not isinstance(answer, str) or len(answer) == 0:
+                return jsonify({
+                            "error": "Incorrect answers should be strings and should not be empty"
+                        })
+
+    new_question = {
+        "question": question.strip(),
+        "correct_answer": data.get("correct_answer"),
+        "incorrect_answers": data.get("incorrect_answers")
     }
 
     with MESSAGE_FILE.open("a+", encoding="utf-8") as file:
@@ -58,7 +86,7 @@ def add_message():
             if last_character != "\n":
                 file.write("\n")
 
-        file.write(json.dumps(new_message) + "\n")
+        file.write(json.dumps(new_question) + "\n")
 
     return "", 201
 
