@@ -6,7 +6,7 @@ const correctText = document.getElementById('correct-answers');
 const totalQuestions = document.getElementById('total-questions');
 const zeroScoreImage = document.getElementById('zero-score-image');
 const perfectScoreImage = document.getElementById('perfect-score-image');
-
+const start_quiz_form = document.getElementById('question-amount-form');
 let zeldaQuestions = [];
 let currentQuestion = 0;
 let correctAnswers = 0;
@@ -20,12 +20,16 @@ function shuffle(array) {
   return shuffled;
 }
 
-function createQuestion(questionObj, questionNum) {
+function createQuestion(questionObj, questionNum, totalQuestions) {
     const newQuestionSection = document.createElement('section');
     newQuestionSection.classList.add('hidden','question');
 
+    const questionHeader = document.createElement('h4');
+    questionHeader.textContent = `Question ${questionNum}/${totalQuestions}:`
+    questionHeader.classList.add('question-header');
+
     const questionText = document.createElement('p');
-    questionText.textContent = `${questionNum}. ${decodeHTML(questionObj.question)}`;
+    questionText.textContent = `${decodeHTML(questionObj.question)}`;
 
     let possibleAnswers = [questionObj.correct_answer, ...questionObj.incorrect_answers];
     shuffledAnswers = shuffle(possibleAnswers);
@@ -53,6 +57,7 @@ function createQuestion(questionObj, questionNum) {
         answersList.appendChild(li);
     });
 
+    newQuestionSection.appendChild(questionHeader);
     newQuestionSection.appendChild(questionText);
     newQuestionSection.appendChild(answersList);
     zeldaQuestions.push(newQuestionSection);
@@ -95,17 +100,22 @@ async function fetchQuestions() {
     return await response.json();
 }
 
-async function loadLocalQuestions() {
+async function loadLocalQuestions(amount=-1) {
     try {
         const questionObjects = await fetchQuestions();
 
-        const shuffledQuestions = shuffle(questionObjects);
+        const shuffledQuestions = shuffle(questionObjects, amount);
 
-        shuffledQuestions.forEach((questionObj, index) => {
-            createQuestion(questionObj, index + 1);
-        });
+        if (amount == 0) {
+            amount = shuffledQuestions.length;
+        }
+
+        for (let index = 0; index < amount; index++) {
+            createQuestion(shuffledQuestions[index], index + 1, amount);
+        }
 
         showQuestion(currentQuestion);
+        start_quiz_form.classList.add('hidden');
     } catch (error) {
         console.error("Unable to load questions:", error);
     }
@@ -128,5 +138,3 @@ function nextQuestion() {
         showResults();
     }
 }
-
-document.addEventListener('DOMContentLoaded', loadLocalQuestions);

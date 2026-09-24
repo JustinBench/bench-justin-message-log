@@ -8,7 +8,9 @@
     </head>
     <body>
         <header>
-             <h1 id="title">The Legend of Zelda Trivia! (v2.0)</h1>
+            <img class="crest" src="{{ url_for('static', filename='project_two/media/hylian_crest.gif') }}" alt="triforce">
+            <h1 id="title">The Legend of Zelda Trivia! (v2.0)</h1>
+            <img class="crest" src="{{ url_for('static', filename='project_two/media/hylian_crest.gif') }}" alt="triforce">
         </header>
         <nav>
             <p class="info-container">In honor of The Legend of Zelda's 40th anniversary this year, I thought I would do a quiz on Legend of Zelda trivia! Questions are stored in a database which anybody can add to since I'm way too trusting!</p>
@@ -20,7 +22,18 @@
             </ul>
         </nav>
         <main>
-            <!-- This page will work like the original version done in the last project -->
+            <form id="question-amount-form" onsubmit="loadLocalQuestions(Number(this.elements.amount.value)); return false;">
+                <label for="question-amount">Number of questions (0 for all)</label>
+                <input id="question-amount" name="amount" type="number" min="0" value="0" required>
+                <button type="submit">Start quiz</button>
+            </form>
+            <section id="question-container"></section>
+            <section id="result-container" class="hidden">
+                <h2>Results</h2>
+                <p>You scored <span id="correct-answers">0</span> out of <span id="total-questions"></span>.</p>
+                <img id="zero-score-image" class="hidden" src="{{ url_for('static', filename='project_two/media/pig_cliff.gif') }}" alt="A pig standing on a cliff">
+                <img id="perfect-score-image" class="hidden" src="{{ url_for('static', filename='project_two/media/tri-force-heroes-cheer.gif') }}" alt="The Tri Force Heroes cheerleading gif">
+            </section>
         </main>
         <footer>
             <h3>Contact</h3>
