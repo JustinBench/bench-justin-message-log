@@ -82,6 +82,9 @@ function showResults() {
         zeldaQuestions.length === 0 || correctAnswers !== zeldaQuestions.length
     );
     resultSection.classList.remove('hidden');
+    const refreshPageButton = document.getElementById('refresh-page-button');
+    refreshPageButton.classList.remove('hidden');
+    refreshPageButton.addEventListener('click', () => window.location.reload());
 }
 
 function decodeHTML(str) {
@@ -137,4 +140,47 @@ function nextQuestion() {
     } else {
         showResults();
     }
+}
+
+async function submitQuestion(question, correctAnswer, incorrectAnswers) {
+    const existingQuestions = await fetchQuestions();
+    const normalizedQuestion = question.trim().toLowerCase();
+
+    let message = "";
+
+    const alreadyExists = existingQuestions.some(
+        existing => existing.question.trim().toLowerCase() === normalizedQuestion
+    );
+
+    if (alreadyExists) {
+        message = "That question already exists!"
+    } else if (!normalizedQuestion.includes("zelda")) {
+        message = 'The question must be about a Zelda game (include the word "Zelda").';
+    } else {
+        const questionData = {
+            question: question,
+            correct_answer: correctAnswer,
+            incorrect_answers: incorrectAnswers
+        };
+
+        const response = await fetch("/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(questionData)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || `Request failed: ${response.status}`)
+        }
+        
+        message = "Question saved successfully!";
+    }
+
+    document.getElementById("add-question-form").reset();
+    const result_message = document.getElementById('form-result-message');
+    result_message.textContent = message;
+    result_message.classList.remove('hidden');
 }

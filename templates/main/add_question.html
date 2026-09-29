@@ -22,7 +22,35 @@
             </ul>
         </nav>
         <main>
-            <!-- This page will have a form that will allow a user to add a question to the database -->
+            <p id="form-result-message" class="hidden"></p>
+            <form id="add-question-form" onsubmit="submitQuestion(
+                document.getElementById('question-input').value,
+                document.getElementById('correct-input').value,
+                Array.from(document.querySelectorAll('.incorrect-input'), input => input.value)
+            ); return false">
+                <ul>
+                    <li>
+                        <label for="question-input">Question:</label>
+                        <input type="text" id="question-input" name="question" required>
+                    </li>
+                    <li>
+                        <label for="correct-input">Correct Answer:</label>
+                        <input type="text" id="correct-input" name="correct_answer" required>
+                    </li>
+                    <li>
+                        <label for="incorrect-answer1">First Incorrect Answer:</label>
+                        <input type="text" id="incorrect-answer1" class="incorrect-input" name="incorrect_answer_1" required>
+                    <li>
+                        <label for="incorrect-answer2">Second Incorrect Answer:</label>
+                        <input type="text" id="incorrect-answer2" class="incorrect-input" name="incorrect_answer_2" required>
+                    </li>
+                    <li>
+                        <label for="incorrect-answer3">Third Incorrect Answer:</label>
+                        <input type="text" id="incorrect-answer3" class="incorrect-input" name="incorrect_answer_3" required>
+                    </li>
+                    <li><button type="submit" id="question-submit">Add Question</button></li>
+                </ul>
+            </form>
         </main>
         <footer>
             <h3>Contact</h3>

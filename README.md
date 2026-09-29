@@ -1,3 +1,16 @@
+# Things Learned So Far
+
+- I understand how to get flask set up now, and how to get files to work with
+flask.
+- Variables in CSS are a great way to set up a color scheme for a website.
+- I think I actually know what an API is now. It's pretty much the set of protocols or policies or rules or functions that handle how requests work. I think. Still unclear. This project has functions in server.py that define how GET and POST work on /messages to get data from messages.jsonl.
+- I now understand how to use JavaScript with HTML, to a fairly basic degree I should probably specify. I pretty much had Codex do everything for me in Software Engineering, but now I actually understand how to have html elements that use JavaScript functions, and I think I know enough that I could build up a whole html file within JavaScript, which I'll never do since that sounds awful.
+- AI doesn't do as good a job at CSS as I could on my own if I wasn't too lazy to style a whole website by myself.
+- I have a better understanding of forms in HTML now. Still a little confused by them, but I used two in this project and tied them each to JavaScript functions, so I sort of get it.
+
+# About This Project
+Since the assignment was to set up a functional way of pushing and pulling things to a server using GET and POST, I thought that I would build off the idea from my last project, which was a Zelda-themed quiz. Rather than pull questions from Open Trivia DB, I just created my own jsonl file with questions to pull from instead. This website has additional functionality for adding questions to the list of what's available. Copilot did pretty much all of the CSS this time since I didn't feel like making it look pretty myself, and it did the main section of index.html since my main focus was to get the quiz and question submissions working.
+
 # Requirements
 Using Python, create a server web application which implements an API that receives, stores, and returns simple messages, according to the following specifications:
 
